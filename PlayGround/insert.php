@@ -1,26 +1,35 @@
 <?php
-require_once 'connectdb.php';
+include 'template/header.html';
+$dbhost = 'localhost';
+$dbuser = 'root';
+$dbpass = '';
+$dbname = 'codephp62';
 
-$frmUsername = $frmPassword = "";
+$myconn = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+if ($myconn->connect_errno) {
+    printf("Connect failed: %s\n", $myconn->connect_error);
+    exit();
+}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $frmUsername = $frmPassword = "";
+    $frmUsername = $_POST["username"];
+    $frmPassword = $_POST["password"];
 
-$frmUsername = $_POST["username"];
-$frmPassword = $_POST["password"];
+    if ($frmUsername && $frmPassword) {
+        $strSQL = "INSERT INTO user(username, password_hash,status) ";
+        $strSQL .= " VALUES ('" . $frmUsername . "','" . $frmPassword . "',0)";
 
-if ($frmUsername && $frmPassword); {
-    $strSQL = "INSERT INTO user(username, password_hash,status) ";
-    $strSQL .= "VALUES ('" . $frmUsername . "', '" . $frmPassword . "',0)";
-
-    $result = $myconn->query($strSQL);
-    if ($result) {
-        echo "เพิ่มข้อมูลสำเร็จ";
-    } else {
-        echo "ไม่สามารถเพิ่มข้อมูลได้";
+        $result = $myconn->query($strSQL);
+        if ($result) {
+            echo "เพิ่มข้อมูลสำเร็จ";
+        } else {
+            echo "ไม่สามารถเพิ่มข้อมูลได้";
+        }
     }
 }
 
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -40,13 +49,16 @@ if ($frmUsername && $frmPassword); {
             </tr>
             <tr>
                 <td>password</td>
-                <td><input type="password" name="password" id="password"></td>
+                <td><input type="text" name="password" id="password"></td>
             </tr>
             <tr>
                 <td colspan="2"><input type="submit" value="save"></td>
             </tr>
-        </table>
+            </tabal>
     </form>
+    <?php
+    include 'template/footer.html';
+    ?>
 </body>
 
 </html>
